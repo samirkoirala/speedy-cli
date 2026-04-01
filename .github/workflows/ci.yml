@@ -18,7 +18,8 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: '1.24'
+          check-latest: true
 
       - name: Verify modules
         run: go mod tidy && git diff --exit-code
@@ -32,5 +33,5 @@ jobs:
       - name: Govulncheck
         uses: golang/govulncheck-action@v1
         with:
-          go-version-input: '1.22'
+          go-version-input: '1.24'
           go-package: ./...
