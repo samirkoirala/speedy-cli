@@ -1,6 +1,6 @@
 module speedy-cli
 
-go 1.24
+go 1.25
 
 require (
 	github.com/fatih/color v1.17.0

@@ -18,7 +18,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.24'
+          go-version: '1.25'
           check-latest: true
 
       - name: Verify modules
@@ -33,5 +33,5 @@ jobs:
       - name: Govulncheck
         uses: golang/govulncheck-action@v1
         with:
-          go-version-input: '1.24'
+          go-version-input: '1.25'
           go-package: ./...
