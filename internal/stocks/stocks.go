@@ -2,6 +2,8 @@ package stocks
 
 import (
 	"encoding/json"
+	"math"
+	"math/rand"
 	"net/http"
 	"sort"
 	"strings"
@@ -29,10 +31,10 @@ func Get(symbol string, topN int) (common.Result, []Stock) {
 	stocks, ok := fromAPI()
 	result := common.Result{Status: common.StatusSuccess, Message: "live API"}
 	if !ok {
-		stocks = fallback()
+		stocks = fallbackWithJitter()
 		result.Status = common.StatusWarning
 		result.Message = "fallback demo data"
-		result.Suggestion = "Live NEPSE endpoint unreachable; showing cached sample"
+		result.Suggestion = "Live NEPSE endpoint blocked/unreachable right now; showing realistic simulated movers"
 	}
 
 	if symbol != "" {
@@ -84,9 +86,9 @@ func fromAPI() ([]Stock, bool) {
 	return out, true
 }
 
-func fallback() []Stock {
+func fallbackWithJitter() []Stock {
 	now := time.Now()
-	return []Stock{
+	base := []Stock{
 		{Symbol: "NABIL", Price: 512.50, ChangePct: 1.2, Spark: "▁▂▄▆█", UpdatedAt: now},
 		{Symbol: "NBL", Price: 350.00, ChangePct: -0.8, Spark: "█▆▄▃▁", UpdatedAt: now},
 		{Symbol: "SBI", Price: 410.00, ChangePct: 2.1, Spark: "▁▃▅▇█", UpdatedAt: now},
@@ -94,6 +96,17 @@ func fallback() []Stock {
 		{Symbol: "EBL", Price: 450.00, ChangePct: -1.0, Spark: "█▇▅▃▁", UpdatedAt: now},
 		{Symbol: "SHIVM", Price: 468.30, ChangePct: 1.4, Spark: "▁▂▅▆█", UpdatedAt: now},
 	}
+
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	for i := range base {
+		priceJitter := (r.Float64() - 0.5) * 8.0
+		pctJitter := (r.Float64() - 0.5) * 0.7
+		base[i].Price = round2(base[i].Price + priceJitter)
+		base[i].ChangePct = round2(base[i].ChangePct + pctJitter)
+		base[i].Spark = spark(base[i].ChangePct)
+		base[i].UpdatedAt = now
+	}
+	return base
 }
 
 func spark(pct float64) string {
@@ -114,4 +127,8 @@ func abs(v float64) float64 {
 		return -v
 	}
 	return v
+}
+
+func round2(v float64) float64 {
+	return math.Round(v*100) / 100
 }

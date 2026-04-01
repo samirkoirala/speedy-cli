@@ -33,8 +33,15 @@ var speedCmd = &cobra.Command{
 		}
 
 		info("🌐 Speed Test Results:")
-		success("Download: %.2f Mbps %s", stats.DownloadMbps, animation.Bar(stats.DownloadMbps, 200))
-		success("Upload:   %.2f Mbps %s", stats.UploadMbps, animation.Bar(stats.UploadMbps, 100))
+		scale := stats.DownloadMbps
+		if stats.UploadMbps > scale {
+			scale = stats.UploadMbps
+		}
+		if scale < 10 {
+			scale = 10
+		}
+		success("Download: %.2f Mbps %s", stats.DownloadMbps, animation.Bar(stats.DownloadMbps, scale))
+		success("Upload:   %.2f Mbps %s", stats.UploadMbps, animation.Bar(stats.UploadMbps, scale))
 		warn("Ping:     %.2f ms ⚡", stats.PingMs)
 		if speedGraph {
 			fmt.Println(animation.DualGraph("Download", stats.DownloadMbps, "Upload", stats.UploadMbps))

@@ -29,14 +29,15 @@ func Bar(value float64, max float64) string {
 	if max <= 0 {
 		max = 100
 	}
-	blocks := int((value / max) * 12)
-	if blocks < 1 {
-		blocks = 1
+	width := 16
+	blocks := int((value / max) * float64(width))
+	if blocks < 0 {
+		blocks = 0
 	}
-	if blocks > 12 {
-		blocks = 12
+	if blocks > width {
+		blocks = width
 	}
-	return strings.Repeat("█", blocks)
+	return strings.Repeat("█", blocks) + strings.Repeat("░", width-blocks)
 }
 
 func DualGraph(a string, av float64, b string, bv float64) string {
@@ -55,15 +56,11 @@ func Progress(pct int) string {
 }
 
 func RocketLaunch() {
-	frames := []string{
-		"   🚀\n   ||\n  /__\\",
-		"\n   🚀\n   ||\n  /__\\",
-		"\n\n   🚀\n   ||\n  /__\\",
+	// Avoid full-screen clears; they look noisy in many terminals.
+	for i := 0; i < 8; i++ {
+		padding := strings.Repeat(" ", i*2)
+		fmt.Printf("\r%s🚀 launching...", padding)
+		time.Sleep(90 * time.Millisecond)
 	}
-	for i := 0; i < 6; i++ {
-		fmt.Print("\033[H\033[2J")
-		fmt.Println(frames[i%len(frames)])
-		time.Sleep(120 * time.Millisecond)
-	}
-	fmt.Print("\033[H\033[2J")
+	fmt.Print("\r\033[K")
 }
