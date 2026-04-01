@@ -1,0 +1,38 @@
+project_name: speedy-cli
+
+builds:
+  - main: ./main.go
+    binary: speedy-cli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - formats: ["tar.gz"]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+brews:
+  - name: speedy-cli
+    repository:
+      owner: samirkoirala
+      name: homebrew-tap
+    directory: Formula
+    homepage: "https://github.com/samirkoirala/speedy-cli"
+    description: "Fast and fun terminal diagnostics tool"
+    license: "MIT"
+
+nfpms:
+  - package_name: speedy-cli
+    vendor: speedy-cli
+    homepage: "https://github.com/samirkoirala/speedy-cli"
+    maintainer: "Samir Koirala <samirkoirala13@gmail.com>"
+    description: "Fast and fun terminal diagnostics tool"
+    license: "MIT"
+    formats:
+      - deb
+    bindir: /usr/bin
