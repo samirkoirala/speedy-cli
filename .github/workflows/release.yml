@@ -22,11 +22,23 @@ jobs:
         with:
           go-version: '1.22'
 
+      - name: Cleanup existing assets on rerun
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          RELEASE_ID="$(gh api repos/${{ github.repository }}/releases/tags/${TAG} --jq '.id' 2>/dev/null || true)"
+          if [ -n "${RELEASE_ID}" ]; then
+            gh api repos/${{ github.repository }}/releases/${RELEASE_ID}/assets --jq '.[].id' | while read -r asset_id; do
+              gh api -X DELETE repos/${{ github.repository }}/releases/assets/${asset_id}
+            done
+          fi
+
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
-          version: latest
+          version: "~> v2"
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

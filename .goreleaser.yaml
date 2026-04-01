@@ -1,4 +1,9 @@
+version: 2
+
 project_name: speedy-cli
+
+release:
+  replace_existing_artifacts: true
 
 builds:
   - main: ./main.go
