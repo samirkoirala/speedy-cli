@@ -105,6 +105,7 @@ speedy-cli stocks --symbol NABIL
 
 ## Project layout
 
+
 ```text
 speedy-cli/
 ├── cmd/
